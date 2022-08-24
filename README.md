@@ -542,20 +542,25 @@ API: create **service** resource
 
 ```
 cat << EOF | kubectl apply -f -
-apiVersion: v1
-kind: Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
   name: api
   namespace: cloudacademy
-  labels:
-    role: api
-    env: demo
 spec:
-  ports:
-   - protocol: TCP
-     port: 8080
-  selector:
-    role: api
+  rules:
+    - host: api.20.23.181.255.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8080
 EOF
 ```
 
@@ -685,20 +690,25 @@ Frontend: create **service** resource
 
 ```
 cat << EOF | kubectl apply -f -
-apiVersion: v1
-kind: Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
   name: frontend
   namespace: cloudacademy
-  labels:
-    role: frontend
-    env: demo
 spec:
-  ports:
-   - protocol: TCP
-     port: 8080
-  selector:
-    role: frontend
+  rules:
+    - host: frontend.20.23.181.255.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 8080
 EOF
 ```
 
