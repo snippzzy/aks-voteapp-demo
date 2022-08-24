@@ -542,25 +542,20 @@ API: create **service** resource
 
 ```
 cat << EOF | kubectl apply -f -
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
   name: api
   namespace: cloudacademy
+  labels:
+    role: api
+    env: demo
 spec:
-  rules:
-    - host: api.20.23.181.255.nip.io
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: api
-                port:
-                  number: 8080
+  ports:
+   - protocol: TCP
+     port: 8080
+  selector:
+    role: api
 EOF
 ```
 
@@ -570,7 +565,7 @@ API: create **ingress** resource
 
 ```
 cat << EOF | kubectl apply -f -
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -579,13 +574,16 @@ metadata:
   namespace: cloudacademy
 spec:
   rules:
-    - host: $API_PUBLIC_FQDN
+    - host: api.X.X.X.X.nip.io
       http:
         paths:
-          - backend:
-              serviceName: api
-              servicePort: 8080
-            path: /
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8080
 EOF
 ```
 
@@ -690,25 +688,20 @@ Frontend: create **service** resource
 
 ```
 cat << EOF | kubectl apply -f -
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
   name: frontend
   namespace: cloudacademy
+  labels:
+    role: frontend
+    env: demo
 spec:
-  rules:
-    - host: frontend.20.23.181.255.nip.io
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: frontend
-                port:
-                  number: 8080
+  ports:
+   - protocol: TCP
+     port: 8080
+  selector:
+    role: frontend
 EOF
 ```
 
@@ -718,7 +711,7 @@ Frontend: create **ingress** resource
 
 ```
 cat << EOF | kubectl apply -f -
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -727,13 +720,16 @@ metadata:
   namespace: cloudacademy
 spec:
   rules:
-    - host: $FRONTEND_PUBLIC_FQDN
+    - host: frontend.X.X.X.X.nip.io
       http:
         paths:
-          - backend:
-              serviceName: frontend
-              servicePort: 8080
-            path: /
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 8080
 EOF
 ```
 
